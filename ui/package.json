@@ -12,9 +12,11 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test:unit": "vitest",
-		"test": "pnpm run test:unit -- --run"
+		"test": "pnpm run test:unit -- --run",
+		"biome:check": "biome check"
 	},
 	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
 		"@sveltejs/adapter-static": "^3.0.8",
 		"@sveltejs/kit": "^2.16.0",
 		"@sveltejs/vite-plugin-svelte": "^5.0.0",
@@ -31,8 +33,6 @@
 		"vitest": "^3.0.0"
 	},
 	"pnpm": {
-		"onlyBuiltDependencies": [
-			"esbuild"
-		]
+		"onlyBuiltDependencies": ["@biomejs/biome", "esbuild"]
 	}
 }
