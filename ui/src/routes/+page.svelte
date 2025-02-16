@@ -1,4 +1,5 @@
 <script lang="ts">
+import { Repo } from "@automerge/automerge-repo";
 import { format, formatISO } from "date-fns";
 
 type Entry = {
@@ -7,23 +8,32 @@ type Entry = {
 	pounds: number;
 };
 
-const entries = $state<Entry[]>([
-	{
-		id: "1",
-		date: new Date("2025-02-15"),
-		pounds: 141.5,
-	},
-	{
-		id: "2",
-		date: new Date("2025-02-16"),
-		pounds: 141.2,
-	},
-	{
-		id: "3",
-		date: new Date("2025-02-17"),
-		pounds: 140.8,
-	},
-]);
+let entries = $state<Entry[]>([]);
+
+const repo = new Repo({});
+
+const doc = repo.create<{
+	entries: Entry[];
+}>({
+	entries: [],
+});
+
+doc.addListener("change", (doc) => {
+	console.log("changed", doc);
+	entries = doc.doc.entries;
+});
+
+function addEntry() {
+	const newEntry: Entry = {
+		id: Math.random().toString(),
+		date: new Date(),
+		pounds: 140,
+	};
+
+	doc.change((doc) => {
+		doc.entries.push(newEntry);
+	});
+}
 </script>
 
 <div class="mx-auto max-w-lg px-4 sm:px-6 lg:px-8 py-14">
@@ -33,7 +43,9 @@ const entries = $state<Entry[]>([
                 <h2 class="text-2xl/7 font-bold text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">Entries</h2>
             </div>
             <div class="flex shrink-0">
-                <button type="button" class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">New Entry</button>
+                <button type="button" class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        onclick={addEntry}
+                >New Entry</button>
             </div>
         </div>
     </div>
